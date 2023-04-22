@@ -11,7 +11,7 @@ const SenderCounts: React.FC<SenderCountsProps> = ({ data = {} }) => {
     barData.sort((a, b) => b.value - a.value);
 
     return (
-        <Card className="max-w-xs">
+        <Card className="max-w-xs max-h-96">
             <Title className='mb-2'>对话分布</Title>
             <BarList data={barData} />
         </Card>

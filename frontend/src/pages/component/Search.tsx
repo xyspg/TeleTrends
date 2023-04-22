@@ -1,27 +1,27 @@
 //@ts-nocheck
-import React, { useState, useEffect, useRef } from 'react';
-import { StatusOnlineIcon } from '@heroicons/react/outline';
+import React, { useEffect, useRef, useState } from "react";
 import {
-    Card,
-    Table,
-    TableHead,
-    TableRow,
-    TableHeaderCell,
-    TableBody,
-    TableCell,
-    Text,
-    Title,
-    Badge,
-} from '@tremor/react';
-import { TextInput } from '@tremor/react';
-import { SearchIcon } from '@heroicons/react/solid';
-import { useRouter } from 'next/router';
-import ClipboardJS from 'clipboard';
+  Card,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeaderCell,
+  TableRow,
+  Text,
+  TextInput,
+} from "@tremor/react";
+import { SearchIcon } from "@heroicons/react/solid";
+import { useRouter } from "next/router";
+import ClipboardJS from "clipboard";
 
 interface SearchProps {
-    uploadedFileContent: any;
-    initialSearchTerm: string | string[];
+  uploadedFileContent: any;
+  initialSearchTerm: string | string[];
+  selectedChatIndex: number | null;
+  chatNames: string[];
 }
+
 interface Message {
     text: any;
     from: string;
@@ -32,13 +32,12 @@ interface Message {
 const Search: React.FC<SearchProps> = ({
                                            uploadedFileContent,
                                            initialSearchTerm,
+                                           selectedChatIndex,
+                                           chatNames,
                                        }) => {
     const [filteredMessages, setFilteredMessages] = useState([]);
     const router = useRouter();
-    const [searchTerm, setSearchTerm] = useState(initialSearchTerm);
-    const [searchPerformed, setSearchPerformed] = useState(false);
-    const [searchCalled, setSearchCalled] = useState(false);
-    const [text, setText] = useState('');
+    const [searchTerm, setSearchTerm] = useState(initialSearchTerm || '');
     const clipboardRef = useRef(null);
 
     useEffect(() => {
@@ -50,66 +49,56 @@ const Search: React.FC<SearchProps> = ({
         };
     }, []);
 
-    const searchMessages = (searchTerm: string) => {
-        setSearchPerformed(true);
-        setSearchCalled(true);
-        if (uploadedFileContent) {
-            const filtered = uploadedFileContent.messages.filter(
-                (message: Message) => {
+    const searchMessages = () => {
+        if (uploadedFileContent && selectedChatIndex !== null) {
+            const selectedChatData =
+              uploadedFileContent.chats.list[selectedChatIndex];
+            if (selectedChatData) {
+                const filtered = selectedChatData.messages.filter((message: Message) => {
                     if (!message.text) return false;
 
-                    if (typeof message.text === 'string') {
-                        return message.text.includes(searchTerm);
-                    } else {
-                        // @ts-ignore
-                        return message.text.some(
-                            (item) => item.type === 'plain' && item.text.includes(searchTerm)
+                    if (Array.isArray(message.text)) {
+                        return message.text.some((item: any) =>
+                            item.type === 'plain' && item.text.toLowerCase().includes(searchTerm.toLowerCase())
                         );
+                    } else {
+                        return message.text.toLowerCase().includes(searchTerm.toLowerCase());
                     }
-                }
-            );
-            if (searchTerm) {
+                });
                 setFilteredMessages(filtered);
-                setText(searchTerm);
-            } else {
-                setFilteredMessages([]);
             }
         }
     };
 
-    useEffect(() => {
-        if (initialSearchTerm) {
-            setSearchPerformed(true);
-            setSearchCalled(true);
-        }
-    }, [initialSearchTerm]);
 
     useEffect(() => {
-        if (searchPerformed) {
-            searchMessages(searchTerm);
+        if (searchTerm !== '') {
+            searchMessages();
+        } else {
+            setFilteredMessages([]);
         }
-    }, [searchPerformed, searchTerm, uploadedFileContent]);
+    }, [searchTerm, uploadedFileContent, selectedChatIndex]);
 
     const SearchOnEnterKey = (e: any) => {
         if (e.key === 'Enter') {
-            searchMessages(searchTerm);
+            searchMessages();
         }
     };
 
     return (
         <>
-            <div>
-                <TextInput
-                    icon={SearchIcon}
-                    placeholder='Search...'
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    onKeyDown={SearchOnEnterKey}
-                    autoComplete='off'
-                />
-            </div>
+        <div>
+            <TextInput
+                icon={SearchIcon}
+                placeholder="Search..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onKeyDown={SearchOnEnterKey}
+                autoComplete="off"
+            />
+        </div>
             {filteredMessages.length > 0 ? (
-                <Card className='mt-4'>
+                <Card className='mt-2'>
                     <Table className='mt-5'>
                         <TableHead>
                             <TableRow>
@@ -144,11 +133,12 @@ const Search: React.FC<SearchProps> = ({
                         </TableBody>
                     </Table>
                 </Card>
-            ) : searchTerm !== '' && searchPerformed && searchCalled ? (
-                <Text className='mt-4'>未找到与“{text}”相关的内容</Text>
+            ) : searchTerm !== '' ? (
+                <Text className='mt-4'>未找到与“{searchTerm}”相关的内容</Text>
             ) : null}
-        </>
-    );
+</>
+);
 };
 
 export default Search;
+

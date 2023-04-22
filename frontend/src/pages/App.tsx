@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, { useState, useEffect } from "react";
 import { Card, Tab, TabList, Text, Title } from "@tremor/react";
 import ChatTrend from "@/pages/component/ChatTrend";
@@ -7,24 +8,10 @@ import HighFreqWords from "@/pages/component/HighFreqWords";
 import Search from "@/pages/component/Search";
 import SenderCounts from "@/pages/component/SenderCounts";
 import SpecialTime from "@/pages/component/SpecialTime";
+import Guide from "@/pages/component/Guide";
+import { Dropdown, DropdownItem } from "@tremor/react";
+import { CubeIcon, CubeTransparentIcon } from "@heroicons/react/solid";
 import { useRouter } from "next/router";
-
-async function uploadFile(file: File): Promise<any> {
-  const formData = new FormData();
-  formData.append("file", file);
-
-  const response = await fetch("/api/upload", {
-    method: "POST",
-    body: formData,
-  });
-
-  if (response.ok) {
-    return await response.json();
-  } else {
-    throw new Error("Error uploading file");
-  }
-}
-
 interface AnalysisData {
   chat_name: string;
   msg_count: number | null;
@@ -36,7 +23,7 @@ interface AnalysisData {
   latest: string;
 }
 
-export default function KpiCardGrid() {
+export default function App() {
   const [selectedView, setSelectedView] = useState("1");
   const [analysisData, setAnalysisData] = useState<AnalysisData>({
     chat_name: "",
@@ -49,6 +36,10 @@ export default function KpiCardGrid() {
     latest: "",
   });
   const [uploadedFileContent, setUploadedFileContent] = useState(null);
+  const [chatNames, setChatNames] = useState<string[]>([]);
+  const [selectedChatIndex, setSelectedChatIndex] = useState<number | null>(null);
+  const [selectedChatData, setSelectedChatData] = useState<AnalysisData | null>(null);
+
   const router = useRouter();
   const initialSearchTerm = router.query.q || "";
   useEffect(() => {
@@ -58,8 +49,13 @@ export default function KpiCardGrid() {
   }, [initialSearchTerm]);
 
   const handleAnalysisDataReceived = (data: any) => {
-    setAnalysisData(data);
+    setAnalysisData(data.all_chats_results);
+    setChatNames(data.chat_names);
+    setSelectedChatIndex(0);
+    setSelectedChatData(data.all_chats_results[data.chat_names[0]]);
   };
+
+
 
   const handleUploadedFileContent = (content: any) => {
     setUploadedFileContent(content);
@@ -77,10 +73,10 @@ export default function KpiCardGrid() {
         earliest: "",
         latest: "",
       });
+      setChatNames([]);
     }
   };
 
-  // @ts-ignore
   return (
     <div className="bg-slate-50 p-6 sm:p-10 h-screen md:text-2xl">
       <div className="mb-4">
@@ -88,56 +84,76 @@ export default function KpiCardGrid() {
         <Text>
           <label>上传聊天记录文件以开始</label>
         </Text>
+        <Guide />
       </div>
       <UploadForm
         onAnalysisDataReceived={handleAnalysisDataReceived}
         onUploadedFileContentReceived={handleUploadedFileContent}
         onHasRemoved={handleHasRemoved}
       />
-      {analysisData.chat_name && (
-        <div>
-          <TabList
-            defaultValue="1"
-            onValueChange={(value) => setSelectedView(value)}
-            className="mt-6"
-          >
-            <Tab value="1" text="总览" />
-            <Tab value="2" text="搜索" />
-          </TabList>
-          <br />
-          {selectedView === "1" ? (
+      {chatNames.length > 0 && (
+        <div className="mt-4">
+          <Card className="max-w-xs">
+            <Text>选择联系人</Text>
+            <Dropdown
+                className="mt-2"
+                onValueChange={(value) => {
+                  setSelectedChatIndex(value);
+                  setSelectedChatData(analysisData[chatNames[value]]);
+                }}
+                placeholder={selectedChatData?.chat_name}
+            >
+
+            {chatNames.map((chatName, index) => (
+                //@ts-ignore
+                <DropdownItem key={index} value={index} text={chatName} />
+              ))}
+            </Dropdown>
+          </Card>
+          {selectedChatIndex !== null && (
             <>
-              <BasicInformation
-                chatName={analysisData.chat_name}
-                //@ts-ignore
-                msgCount={
-                  analysisData.msg_count ? analysisData.msg_count : null
-                }
-                //@ts-ignore
-                days_have_chatted={
-                  analysisData.days_have_chatted
-                    ? analysisData.days_have_chatted
-                    : null
-                }
-              />
-              <div className="mb-6">
-                <ChatTrend dates={analysisData.dates} />
-              </div>
-              <div className="flex flex-row gap-4-myself">
-                <HighFreqWords data={analysisData.high_frequency_words} />
-                <SenderCounts data={analysisData.sender_counts} />
-                <SpecialTime
-                  earliest={analysisData.earliest}
-                  latest={analysisData.latest}
-                />
-              </div>
+              <TabList
+                defaultValue="1"
+                onValueChange={(value) => setSelectedView(value)}
+                className="mt-6"
+              >
+                <Tab value="1" text="总览" />
+                <Tab value="2" text="搜索" />
+              </TabList>
+              <br />
+
+              {selectedView === "1" ? (
+                  <>
+                    <BasicInformation
+                        chatName={selectedChatData?.chat_name || ""}
+                        msgCount={selectedChatData?.msg_count || null}
+                        days_have_chatted={selectedChatData?.days_have_chatted || null}
+                    />
+                    <div className="mb-6">
+                      <ChatTrend dates={selectedChatData?.dates} />
+                    </div>
+                    <div className="flex flex-col md:flex-row gap-2 md:gap-4">
+                      <HighFreqWords data={selectedChatData?.high_frequency_words} />
+                      <SenderCounts data={selectedChatData?.sender_counts} />
+                      <SpecialTime
+                          earliest={selectedChatData?.earliest}
+                          latest={selectedChatData?.latest}
+                      />
+                    </div>
+                  </>
+              ) : (
+                  <Card className="mt-2">
+                    <div className="h-96">
+                      <Search
+                          uploadedFileContent={uploadedFileContent}
+                          initialSearchTerm={initialSearchTerm}
+                          chatNames={chatNames}
+                          selectedChatIndex={selectedChatIndex}
+                      />
+                    </div>
+                  </Card>
+              )}
             </>
-          ) : (
-            <Card className="mt-6">
-              <div className="h-96">
-                <Search uploadedFileContent={uploadedFileContent} />
-              </div>
-            </Card>
           )}
         </div>
       )}

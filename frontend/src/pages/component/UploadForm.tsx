@@ -13,8 +13,7 @@ const UploadForm: React.FC<UploadFormProps> = ({
   onUploadedFileContentReceived,
     onHasRemoved
 }) => {
-  const [analysisData, setAnalysisData] = useState([]);
-  const [uploadedFileContent, setUploadedFileContent] = useState(null);
+
   const [removed, setRemoved] = useState(false);
 
 
@@ -29,9 +28,7 @@ const UploadForm: React.FC<UploadFormProps> = ({
       // @ts-ignore
 
       const chatData = JSON.parse(content);
-      setUploadedFileContent(chatData);
       onUploadedFileContentReceived(chatData);
-
       // Upload chat data to the server
       const formData = new FormData();
       formData.append("file", file);
@@ -48,7 +45,6 @@ const UploadForm: React.FC<UploadFormProps> = ({
         );
 
         // Handle success
-        setAnalysisData(response.data);
         onAnalysisDataReceived(response.data);
         onSuccess();
       } catch (error) {
@@ -76,7 +72,7 @@ const UploadForm: React.FC<UploadFormProps> = ({
   return (
       // @ts-ignore
       <Upload {...props}>
-      <Button icon={<UploadOutlined />}>点击上传</Button>
+      <Button  className='mb-4' icon={<UploadOutlined />}>点击上传</Button>
     </Upload>
   );
 };
