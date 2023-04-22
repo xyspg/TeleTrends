@@ -8,7 +8,7 @@ interface ChatTimesCardProps {
 
 const ChatTimesCard: React.FC<ChatTimesCardProps> = ({ earliest, latest }) => {
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 mb-4">
       <Card className="max-w-xs">
         <Text>最晚</Text>
         <Metric>{latest}</Metric>

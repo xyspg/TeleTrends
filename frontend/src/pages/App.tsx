@@ -10,8 +10,10 @@ import SenderCounts from "@/pages/component/SenderCounts";
 import SpecialTime from "@/pages/component/SpecialTime";
 import Guide from "@/pages/component/Guide";
 import { Dropdown, DropdownItem } from "@tremor/react";
-import { CubeIcon, CubeTransparentIcon } from "@heroicons/react/solid";
 import { useRouter } from "next/router";
+import { Button, message, Space } from 'antd';
+import {handle} from "mdast-util-to-markdown/lib/handle";
+
 interface AnalysisData {
   chat_name: string;
   msg_count: number | null;
@@ -76,9 +78,17 @@ export default function App() {
       setChatNames([]);
     }
   };
+  const [messageApi, contextHolder] = message.useMessage();
+  const handleUploadError = (error: any) => {
+    messageApi.open({
+      type: 'error',
+      content: error,
+    });
+  };
 
   return (
     <div className="bg-slate-50 p-6 sm:p-10 h-screen md:text-2xl">
+      {contextHolder}
       <div className="mb-4">
         <Title>Telegram 小助手</Title>
         <Text>
@@ -90,6 +100,7 @@ export default function App() {
         onAnalysisDataReceived={handleAnalysisDataReceived}
         onUploadedFileContentReceived={handleUploadedFileContent}
         onHasRemoved={handleHasRemoved}
+        onErrorNotification={handleUploadError}
       />
       {chatNames.length > 0 && (
         <div className="mt-4">

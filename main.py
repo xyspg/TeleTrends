@@ -11,6 +11,7 @@ from bs4 import BeautifulSoup
 import re
 import json
 
+
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,

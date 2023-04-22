@@ -17,7 +17,7 @@ const HighFreqWords: React.FC<HighFreqWordsProps> = ({ data = [] }) => {
 
   return (
     <>
-      <Card className="max-w-xs">
+      <Card className="max-w-xs mb-4">
         <Title className="mb-2">高频词</Title>
         <BarList data={barData} showAnimation={true} />
         {itemsToShow < data.length && (
