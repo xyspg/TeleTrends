@@ -1,11 +1,12 @@
-import React from 'react';
-import App from '@/pages/App'
+import React from "react";
+import App from "@/pages/App";
+
 const Home = () => {
-    return (
-        <>
-            <App />
-        </>
-    );
+  return (
+    <>
+        <App />
+    </>
+  );
 };
 
 export default Home;

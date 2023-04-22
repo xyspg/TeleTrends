@@ -1,17 +1,18 @@
-import { Card, List, ListItem, Title } from "@tremor/react";
+import { Card, List, ListItem, Title, BarList } from "@tremor/react";
+import React from "react";
 
-const HighFreqWords = ({ data }) => {
+interface HighFreqWordsProps {
+    data: [string, number][]; // [word, frequency]
+}
+const HighFreqWords:React.FC<HighFreqWordsProps> = ({ data = [] }) => {
+    const barData = data.map(([name, value]) => ({ name, value }));
+
     return (
         <Card className="max-w-xs">
-            <Title>High Frequency Words</Title>
-            <List>
-                {data.map(([word, frequency]) => (
-                    <ListItem key={word}>
-                        <span>{word}</span>
-                        <span>{frequency}</span>
-                    </ListItem>
-                ))}
-            </List>
+            <Title className='mb-2'>高频词</Title>
+            <BarList data={barData}
+            showAnimation={true}
+            />
         </Card>
     );
 };
