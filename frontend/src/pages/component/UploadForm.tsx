@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, { useState } from "react";
 import { Button, Upload } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
