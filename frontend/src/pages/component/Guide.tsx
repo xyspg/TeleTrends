@@ -12,7 +12,7 @@ import Image from "next/image";
 const GuideContent = () => {
   return (
     <>
-      <p>
+      <div>
         1. 打开 Telegram Desktop <br/>
         macOS 用户请下载{" "}
         <Link
@@ -23,19 +23,19 @@ const GuideContent = () => {
         >Telegram Lite
         </Link>
         <br/>
-      </p>
-      <p>
+      </div>
+      <div>
         2. 点击菜单 - Settings - Advanced - Export Telegram Data <br /><br />
           <Image src='/img/guide.png' alt="export telegram data" width={400} height={300} />
-      </p>
+      </div>
         <br />
-        <p>
+        <div>
             3. 在打开的提示框中，仅勾选 ”Personal Chats“，并选择导出 JSON 格式 <br /><br />
             <div className='flex flex-col md:flex-row gap-2'>
             <Image src='/img/guide1.png' alt='personal chats'  width={400} height={300} />
             <Image src='/img/guide2.png' alt='export json'  width={400} height={300} />
             </div>
-        </p>
+        </div>
     </>
   );
 };

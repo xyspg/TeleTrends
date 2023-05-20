@@ -41,6 +41,7 @@ export default function App() {
   const [chatNames, setChatNames] = useState<string[]>([]);
   const [selectedChatIndex, setSelectedChatIndex] = useState<number | null>(null);
   const [selectedChatData, setSelectedChatData] = useState<AnalysisData | null>(null);
+  const [dataShown, setDatashown] = useState(false);
 
   const router = useRouter();
   const initialSearchTerm = router.query.q || "";
@@ -57,7 +58,11 @@ export default function App() {
     setSelectedChatData(data.all_chats_results[data.chat_names[0]]);
   };
 
-
+  useEffect(() => {
+    if(chatNames.length > 0) {
+      setDatashown(true);
+    }
+  }, [chatNames]);
 
   const handleUploadedFileContent = (content: any) => {
     setUploadedFileContent(content);
@@ -76,6 +81,7 @@ export default function App() {
         latest: "",
       });
       setChatNames([]);
+      setDatashown(false)
     }
   };
   const [messageApi, contextHolder] = message.useMessage();
@@ -101,6 +107,7 @@ export default function App() {
         onUploadedFileContentReceived={handleUploadedFileContent}
         onHasRemoved={handleHasRemoved}
         onErrorNotification={handleUploadError}
+        dataShown={dataShown}
       />
       {chatNames.length > 0 && (
         <div className="mt-4">
