@@ -1,5 +1,9 @@
 from fastapi import FastAPI, File, UploadFile
 from datetime import datetime, time, timedelta
+import nltk
+
+nltk.download('punkt')         
+nltk.download('stopwords')   
 from nltk.tokenize import word_tokenize
 from nltk.probability import FreqDist
 from nltk.corpus import stopwords
