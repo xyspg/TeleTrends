@@ -77,7 +77,7 @@ def html_to_json(html: str) -> dict:
     return json_structure
 
 
-@app.post("api/upload/")
+@app.post("upload/")
 async def upload_file(file: UploadFile = File(..., content_type='application/json')):
     content = await file.read()
     content_str = content.decode("utf-8")

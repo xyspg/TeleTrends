@@ -38,7 +38,10 @@ const UploadForm: React.FC<UploadFormProps> = ({
       formData.append("file", file);
 
       try {
-        const url = "/api/upload";
+        const url =
+          process.env.NODE_ENV === "production"
+            ? `${process.env.NEXT_PUBLIC_SERVER}/upload`
+            : "http://localhost:8080/upload";
         const response = await axios.post(url, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
