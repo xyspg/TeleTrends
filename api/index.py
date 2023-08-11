@@ -19,10 +19,7 @@ nltk.download('stopwords')
 app = FastAPI()
 
 origins = [
-    "http://localhost",
-    "http://localhost:3000",
-    "https://telegram-analyzer.vercel.app",
-    "https://api-tg.xyspg.moe"
+    '*'
 ]
 
 app.add_middleware(
@@ -80,7 +77,7 @@ def html_to_json(html: str) -> dict:
     return json_structure
 
 
-@app.post("/upload/")
+@app.post("api/upload/")
 async def upload_file(file: UploadFile = File(..., content_type='application/json')):
     content = await file.read()
     content_str = content.decode("utf-8")
