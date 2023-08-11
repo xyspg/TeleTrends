@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import axios from "axios";
 import { Progress } from "antd";
-import { Button } from "@/../components/ui/button";
+import { Button } from "../../components/ui/button";
 
 interface UploadFormProps {
   onAnalysisDataReceived: (data: any) => void;

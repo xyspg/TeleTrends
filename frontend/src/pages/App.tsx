@@ -1,14 +1,14 @@
 //@ts-nocheck
 import React, { useState, useEffect } from "react";
 import { Card, Tab, TabList, Text, Title } from "@tremor/react";
-import ChatTrend from "@/pages/component/ChatTrend";
-import UploadForm from "@/pages/component/UploadForm";
-import BasicInformation from "@/pages/component/BasicInformation";
-import HighFreqWords from "@/pages/component/HighFreqWords";
-import Search from "@/pages/component/Search";
-import SenderCounts from "@/pages/component/SenderCounts";
-import SpecialTime from "@/pages/component/SpecialTime";
-import Guide from "@/pages/component/Guide";
+import ChatTrend from "@/component/ChatTrend";
+import UploadForm from "@/component/UploadForm";
+import BasicInformation from "@/component/BasicInformation";
+import HighFreqWords from "@/component/HighFreqWords";
+import Search from "@/component/Search";
+import SenderCounts from "@/component/SenderCounts";
+import SpecialTime from "@/component/SpecialTime";
+import Guide from "@/component/Guide";
 import { Dropdown, DropdownItem } from "@tremor/react";
 import { useRouter } from "next/router";
 import { Button, message, Space } from 'antd';

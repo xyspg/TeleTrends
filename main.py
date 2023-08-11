@@ -1,31 +1,37 @@
 from fastapi import FastAPI, File, UploadFile
-from datetime import datetime, time, timedelta
-import nltk
+from fastapi.middleware.cors import CORSMiddleware
 
-nltk.download('punkt')         
-nltk.download('stopwords')   
+from datetime import datetime, time, timedelta
 from nltk.tokenize import word_tokenize
 from nltk.probability import FreqDist
 from nltk.corpus import stopwords
 import string
-from fastapi.middleware.cors import CORSMiddleware
 from collections import defaultdict
 import pytz
 from bs4 import BeautifulSoup
 import re
 import json
+import nltk
 
+nltk.download('punkt')
+nltk.download('stopwords')
 
 app = FastAPI()
 
+origins = [
+    "http://localhost",
+    "http://localhost:3000",
+    "https://telegram-analyzer.vercel.app",
+    "https://api-tg.xyspg.moe"
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 
 
 def parse_date(date_str: str) -> str:
@@ -33,7 +39,6 @@ def parse_date(date_str: str) -> str:
     utc_time = time - time.utcoffset()
     formatted_time = utc_time.strftime("%Y-%m-%dT%H:%M:%S")
     return formatted_time
-
 
 def html_to_json(html: str) -> dict:
     soup = BeautifulSoup(html, 'html.parser')
