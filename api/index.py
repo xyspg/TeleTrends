@@ -37,6 +37,7 @@ def parse_date(date_str: str) -> str:
     formatted_time = utc_time.strftime("%Y-%m-%dT%H:%M:%S")
     return formatted_time
 
+
 def html_to_json(html: str) -> dict:
     soup = BeautifulSoup(html, 'html.parser')
 
@@ -77,7 +78,7 @@ def html_to_json(html: str) -> dict:
     return json_structure
 
 
-@app.post("upload/")
+@app.post("/upload")
 async def upload_file(file: UploadFile = File(..., content_type='application/json')):
     content = await file.read()
     content_str = content.decode("utf-8")
@@ -95,7 +96,9 @@ async def upload_file(file: UploadFile = File(..., content_type='application/jso
     for chat_data in all_data["chats"]["list"]:
         dates = [datetime.strptime(msg['date'], '%Y-%m-%dT%H:%M:%S') for msg in chat_data['messages']]
         # High-frequency words
-        all_text = ' '.join([entity['text'].replace('“', '"').replace('”', '"') for msg in chat_data['messages'] for entity in msg['text_entities'] if entity['type'] == 'plain'])
+        all_text = ' '.join(
+            [entity['text'].replace('“', '"').replace('”', '"') for msg in chat_data['messages'] for entity in
+             msg['text_entities'] if entity['type'] == 'plain'])
         tokens = word_tokenize(all_text)
         stop_words = set(stopwords.words("english"))
         punctuations = set(string.punctuation)
@@ -137,13 +140,19 @@ async def upload_file(file: UploadFile = File(..., content_type='application/jso
         earliest_time = min(early_morning_times, default=None)
 
         all_chats_results[chat_name] = {
-                   "chat_name" : chat_name,
-                   "msg_count": msg_count,
-                   "days_have_chatted": days_have_chatted,
-                   "earliest": earliest_time.strftime("%H:%M:%S") if earliest_time else None,
-                   "latest": latest_time.strftime("%H:%M:%S") if latest_time else None,
-                   "sender_counts": dict(sender_counts),
-                   "high_frequency_words": high_frequency_words,
-                   "dates": dates,
-               }
-    return {"chat_names": list(all_chats_results.keys()),"all_chats_results": all_chats_results}
+            "chat_name": chat_name,
+            "msg_count": msg_count,
+            "days_have_chatted": days_have_chatted,
+            "earliest": earliest_time.strftime("%H:%M:%S") if earliest_time else None,
+            "latest": latest_time.strftime("%H:%M:%S") if latest_time else None,
+            "sender_counts": dict(sender_counts),
+            "high_frequency_words": high_frequency_words,
+            "dates": dates,
+        }
+    return {"chat_names": list(all_chats_results.keys()), "all_chats_results": all_chats_results}
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run(app, port=8000)
