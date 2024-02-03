@@ -1,5 +1,7 @@
-# Telegram 聊天记录分析
+# Telegram 聊天记录分析 
+
 ![Screenshot](img/hero.png)
+
 ## 功能
 - 选择聊天对象
 - 数据可视化，聊天趋势，统计等
