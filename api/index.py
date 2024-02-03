@@ -18,17 +18,17 @@ nltk.download('stopwords')
 
 app = FastAPI()
 
-origins = [
-    '*'
-]
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# origins = [
+#     '*'
+# ]
+#
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=origins,
+#     allow_credentials=True,
+#     allow_methods=["*"],
+#     allow_headers=["*"],
+# )
 
 
 def parse_date(date_str: str) -> str:
@@ -151,8 +151,8 @@ async def upload_file(file: UploadFile = File(..., content_type='application/jso
         }
     return {"chat_names": list(all_chats_results.keys()), "all_chats_results": all_chats_results}
 
-
-if __name__ == "__main__":
-    import uvicorn
-
-    uvicorn.run(app, port=8000)
+#
+# if __name__ == "__main__":
+#     import uvicorn
+#
+#     uvicorn.run(app, port=8000)
