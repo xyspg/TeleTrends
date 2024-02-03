@@ -1,5 +1,6 @@
 # Telegram Chat History Analyzer
 [English](README.md) | [简体中文](README.zh.md)
+![Screenshot](img/hero.png)
 ## Features
 - Analysis on each contact
 - Data visualization, chat trends, statistics, etc
