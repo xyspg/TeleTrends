@@ -19,3 +19,21 @@ docker-compose up --build
 要停止服务，请按 Ctrl+C
 
 运行 docker-compose up 以重新启动服务
+
+## 本地开发
+Frontend:
+```bash
+git clone https://github.com/xyspg/TeleTrends.git
+cd TeleTrends
+curl -fsSL https://bun.sh/install | bash 
+bun install 
+bun dev
+```
+
+Backend:
+```bash
+cd api
+pip install -r requirements.txt
+uvicorn index:app --reload
+```
+
