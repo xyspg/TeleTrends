@@ -30,10 +30,13 @@ const UploadForm: React.FC<UploadFormProps> = ({
     reader.onload = async (e) => {
       const content = e.target?.result;
       if (typeof content === "string") {
-        const chatData = JSON.parse(content);
-        onUploadedFileContentReceived(chatData);
+        try {
+          const chatData = JSON.parse(content);
+          onUploadedFileContentReceived(chatData);
+        } catch (e) {
+          onErrorNotification("文件结构有误，请检查导出文件是否完整")
+        }
       }
-      // Upload chat data to the server
       const formData = new FormData();
       formData.append("file", file);
 

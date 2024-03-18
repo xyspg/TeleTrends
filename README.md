@@ -1,4 +1,5 @@
-# Telegram Chat History Analyzer
+# TeleTrends - Chat Trends & Analytics for Telegram
+
 [English](README.md) | [简体中文](README.zh.md) 
 
 ![Screenshot](img/hero.png)
