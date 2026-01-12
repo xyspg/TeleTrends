@@ -78,6 +78,11 @@ def html_to_json(html: str) -> dict:
     return json_structure
 
 
+@app.get("/")
+def read_root():
+    return {"status": "ok", "service": "backend"}
+
+
 @app.post("/upload")
 async def upload_file(file: UploadFile = File(..., content_type='application/json')):
     content = await file.read()
